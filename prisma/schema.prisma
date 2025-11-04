@@ -1,0 +1,153 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  name         String?
+  role         Role     @default(USER)
+  createdAt    DateTime @default(now())
+  PasswordReset PasswordReset[]
+}
+
+enum Role {
+  ADMIN
+  USER
+}
+
+model List {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  createdAt   DateTime @default(now())
+  members     ListSubscriber[]
+}
+
+model Subscriber {
+  id           String    @id @default(cuid())
+  email        String    @unique
+  firstName    String?
+  lastName     String?
+  customFields Json?
+  status       SubStatus @default(ACTIVE)
+  createdAt    DateTime  @default(now())
+  lists        ListSubscriber[]
+  sends        SendJob[]
+}
+
+enum SubStatus {
+  ACTIVE
+  UNSUBSCRIBED
+}
+
+model ListSubscriber {
+  listId       String
+  subscriberId String
+  createdAt    DateTime @default(now())
+
+  list       List       @relation(fields: [listId], references: [id])
+  subscriber Subscriber @relation(fields: [subscriberId], references: [id])
+
+  @@id([listId, subscriberId])
+}
+
+model Template {
+  id        String   @id @default(cuid())
+  name      String
+  html      String
+  text      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  Campaign  Campaign[]
+}
+
+model Campaign {
+  id          String       @id @default(cuid())
+  name        String
+  subject     String
+  fromName    String
+  fromEmail   String
+  replyTo     String?
+  templateId  String
+  status      CampaignStatus @default(DRAFT)
+  scheduledAt DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  template Template @relation(fields: [templateId], references: [id])
+  jobs     SendJob[]
+}
+
+enum CampaignStatus {
+  DRAFT
+  QUEUED
+  SENDING
+  COMPLETED
+  CANCELLED
+}
+
+model SendJob {
+  id           String      @id @default(cuid())
+  campaignId   String
+  subscriberId String
+  status       SendStatus  @default(QUEUED)
+  error        String?
+  messageId    String?
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+
+  campaign   Campaign   @relation(fields: [campaignId], references: [id])
+  subscriber Subscriber @relation(fields: [subscriberId], references: [id])
+
+  @@index([campaignId])
+  @@index([subscriberId])
+}
+
+enum SendStatus {
+  QUEUED
+  SENT
+  FAILED
+  BOUNCED
+  COMPLAINED
+  SUPPRESSED
+}
+
+model Suppression {
+  id        String    @id @default(cuid())
+  email     String    @unique
+  reason    SuppReason
+  meta      Json?
+  createdAt DateTime  @default(now())
+}
+
+enum SuppReason {
+  BOUNCE
+  COMPLAINT
+  MANUAL
+}
+
+model Log {
+  id        String   @id @default(cuid())
+  type      String
+  message   String
+  meta      Json?
+  createdAt DateTime @default(now())
+  @@index([createdAt])
+}
+
+model PasswordReset {
+  id        String   @id @default(cuid())
+  userId    String
+  token     String   @unique
+  expiresAt DateTime
+  used      Boolean  @default(false)
+  user      User     @relation(fields: [userId], references: [id])
+}
+

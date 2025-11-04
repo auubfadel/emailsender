@@ -1,4 +1,10 @@
 {
+  "crons": [
+    { "path": "/api/cron/send-queue", "schedule": "* * * * *" },
+    { "path": "/api/cron/retry-failed", "schedule": "*/15 * * * *" }
+  ]
+}
+{
   "version": 2,
   "builds": [
     { "src": "api/send.js", "use": "@vercel/node" }

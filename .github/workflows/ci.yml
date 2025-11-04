@@ -1,0 +1,43 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      - name: Install deps
+        run: npm ci
+      - name: Typecheck
+        run: npx tsc -noEmit
+      - name: Lint
+        run: npm run lint --if-present
+      - name: Build
+        env:
+          DATABASE_URL: postgresql://user:pass@localhost:5432/db
+          NEXTAUTH_SECRET: dummysecret_dummysecret_dummysecret
+          SMTP_HOST: email-smtp.eu-north-1.amazonaws.com
+          SMTP_PORT: 587
+          SMTP_USER: dummy
+          SMTP_PASS: dummy
+          SMTP_SECURE: false
+          DEFAULT_FROM_NAME: CI
+          DEFAULT_FROM_EMAIL: ci@example.com
+          DEFAULT_REPLY_TO: ci@example.com
+          SEND_RATE_PER_SEC: '10'
+          MAX_CONCURRENCY: '3'
+          AWS_SNS_VERIFY_TOKEN: token
+          PUBLIC_SIGNUP_ENABLED: 'false'
+        run: npm run build
+
