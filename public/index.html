@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Email Sender</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <main class="container">
+      <h1>Email Sender</h1>
+      <form id="emailForm" class="card">
+        <div class="row">
+          <label for="fromName">From name</label>
+          <input type="text" id="fromName" name="fromName" placeholder="Your name (optional)" />
+        </div>
+        <div class="row">
+          <label for="replyTo">Reply-To</label>
+          <input type="email" id="replyTo" name="replyTo" placeholder="reply-to@example.com (optional)" />
+        </div>
+        <div class="row required">
+          <label for="to">To</label>
+          <input type="text" id="to" name="to" placeholder="recipient@example.com, another@domain.com" required />
+        </div>
+        <div class="row">
+          <label for="subject">Subject</label>
+          <input type="text" id="subject" name="subject" placeholder="Subject" />
+        </div>
+        <div class="tabs">
+          <button type="button" class="tab active" data-target="#textTab">Plain text</button>
+          <button type="button" class="tab" data-target="#htmlTab">HTML</button>
+        </div>
+        <div id="textTab" class="tab-panel active">
+          <textarea id="text" name="text" placeholder="Write your plain text message..."></textarea>
+        </div>
+        <div id="htmlTab" class="tab-panel">
+          <textarea id="html" name="html" placeholder="Write your HTML message..."></textarea>
+        </div>
+        <button type="submit" class="primary">Send</button>
+        <div id="status" class="status" aria-live="polite"></div>
+      </form>
+
+      <section class="card info">
+        <h2>Configuration</h2>
+        <p>Set your SMTP settings in a <code>.env</code> file. See <code>.env.example</code>.</p>
+      </section>
+    </main>
+    <script src="/app.js" defer></script>
+  </body>
+</html>
+
+

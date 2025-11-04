@@ -1,0 +1,23 @@
+{
+  "name": "emailsender",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Simple web app to send emails via Nodemailer",
+  "main": "server.js",
+  "scripts": {
+    "dev": "node server.js",
+    "start": "NODE_ENV=production node server.js",
+    "lint": "echo 'No linter configured'"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.1",
+    "nodemailer": "^6.9.15"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
+
